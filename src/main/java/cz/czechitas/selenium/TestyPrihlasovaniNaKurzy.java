@@ -24,37 +24,33 @@ public class TestyPrihlasovaniNaKurzy {
     }
 
     @Test
-    public void ExistingParentUserIsAbleToLogged() {
+    public void ExistingParentIsAbleToLog() {
         prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
         WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//div/a[contains(@href,'https://cz-test-jedna.herokuapp.com/prihlaseni')]"));
         LoginMainPageBtn.click();
 
-        WebElement emailValue = prohlizec.findElement(By.id("email"));
-        emailValue.click();
-        emailValue.sendKeys("beznyemail@seznam.cz");
-        WebElement passwordValue = prohlizec.findElement(By.id("password"));
-        passwordValue.sendKeys("Karelctvrty4");
-
-        WebElement loginFormBtn = prohlizec.findElement(By.xpath("//button[@type='submit']"));
-        loginFormBtn.click();
+        this.Login("beznyemail@seznam.cz", "Karelctvrty4");
 
         WebElement isLoggedIn = prohlizec.findElement(By.xpath("//*[contains(@class,'dropdown')]/span"));
         String isLoggedInText = isLoggedIn.getText();
 
         Assertions.assertEquals("Přihlášen", isLoggedInText);
-
     }
 
-    @Test
-    public void prvniZvireVTabulceMusiBytKocka() {
-        prohlizec.navigate().to("https://automation3.shinekamil.repl.co/");
-        WebElement zalozkaTabulka = prohlizec.findElement(By.linkText("Table"));
-        zalozkaTabulka.click();
+    //@Test
+    //public void ParentIsAbleToChooseCourseAndLoggIn() {
 
-        List<WebElement> seznamZvirat = prohlizec.findElements(By.xpath("//table/tbody/tr/td[1]"));
-        WebElement elementPrvnihoZvirete = seznamZvirat.get(0);
-        String prvniZvire = elementPrvnihoZvirete.getText();
-        Assertions.assertEquals("Kočka", prvniZvire);
+    //}
+
+    private void Login(String email, String password) {
+        WebElement emailValue = prohlizec.findElement(By.id("email"));
+        emailValue.click();
+        emailValue.sendKeys(email);
+        WebElement passwordValue = prohlizec.findElement(By.id("password"));
+        passwordValue.sendKeys(password);
+
+        WebElement loginFormBtn = prohlizec.findElement(By.xpath("//button[@type='submit']"));
+        loginFormBtn.click();
     }
 
     @AfterEach
