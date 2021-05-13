@@ -38,7 +38,7 @@ public class TestyPrihlasovaniNaKurzy {
     }
 
     @Test
-    public void ParentIsAbleToChooseCourseAndLoggIn() {
+    public void ParentIsAbleToChooseCourseLogInCreateApplication() {
         prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
 
         List<WebElement> moreInfoBtns = prohlizec.findElements(By.xpath("//a[text()='Více informací']"));
@@ -60,7 +60,32 @@ public class TestyPrihlasovaniNaKurzy {
 
     }
 
+    @Test
+    public void ParentIsAbleToLoginChooseCourseAndApply() {
+        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
+        WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//a[text()='Přihlásit                ']"));
+        LoginMainPageBtn.click();
+        this.login("beznyemail@seznam.cz", "Karelctvrty4");
 
+        WebElement createNewApplicationBtn = prohlizec.findElement(By.xpath("//a[contains(text(), 'Vytvořit novou')]"));
+        createNewApplicationBtn.click();
+
+        List<WebElement> moreInfoBtns = prohlizec.findElements(By.xpath("//a[text()='Více informací']"));
+        WebElement moreInfoDABtn = moreInfoBtns.get(0);
+        moreInfoDABtn.click();
+
+        List<WebElement> createApplicationBtns = prohlizec.findElements(By.xpath("//div/a[text()='Vytvořit přihlášku']"));
+        WebElement createApplicationBtn1 = createApplicationBtns.get(1);
+        createApplicationBtn1.click();
+
+        this.fillApplication("Johanka", "Z Arku");
+
+        WebElement createApplicationBtn = prohlizec.findElement(By.xpath("//input[@type = 'submit']"));
+        createApplicationBtn.click();
+
+        WebElement loadConfirmationLink = prohlizec.findElement(By.xpath("//a[contains(@title,'Stáhnout p')]"));
+        Assertions.assertNotNull(loadConfirmationLink);
+    }
 
     private void login(String email, String password) {
         WebElement emailValue = prohlizec.findElement(By.id("email"));
@@ -80,7 +105,7 @@ public class TestyPrihlasovaniNaKurzy {
         chooseTermInput.sendKeys("05." + Keys.ENTER);
 
         WebElement parentNameField = prohlizec.findElement(By.id("parent_name"));
-        Assertions.assertEquals("Karel Čtvrtý",parentNameField.getAttribute("value"));
+        parentNameField.sendKeys("");
 
         WebElement forenameField = prohlizec.findElement(By.xpath("//input[@name='forename']"));
         forenameField.sendKeys(forename);
@@ -90,7 +115,8 @@ public class TestyPrihlasovaniNaKurzy {
         BirthdayField.sendKeys("1.1.2010");
 
         WebElement parentEmail = prohlizec.findElement(By.id("email"));
-        Assertions.assertEquals("beznyemail@seznam.cz",parentEmail.getAttribute("value"));
+        parentEmail.sendKeys("");
+        //Assertions.assertEquals("beznyemail@seznam.cz",parentEmail.getAttribute("value"));
 
         WebElement choosePayment = prohlizec.findElement(By.xpath("//label[contains(@for, 'payment_transfer')]"));
         choosePayment.click();
