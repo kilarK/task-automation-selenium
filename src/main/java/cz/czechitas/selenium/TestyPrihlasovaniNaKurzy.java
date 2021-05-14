@@ -87,6 +87,31 @@ public class TestyPrihlasovaniNaKurzy {
         Assertions.assertNotNull(loadConfirmationLink);
     }
 
+    @Test
+    public void parentIsAbleToLoginAndEditApplication() {
+        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
+        WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//a[text()='Přihlásit                ']"));
+        LoginMainPageBtn.click();
+        this.login("beznyemail@seznam.cz", "Karelctvrty4");
+
+        WebElement EditBtn = prohlizec.findElement(By.xpath("//a[contains(text(), 'Upravit')][1]"));
+        EditBtn.click();
+
+        WebElement restrictionField = prohlizec.findElement(By.xpath("//textarea[@name = 'restrictions']"));
+        restrictionField.clear();
+
+        WebElement restrictionCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
+        restrictionCheckBox.click();
+
+        WebElement noteField = prohlizec.findElement(By.xpath("//textarea[@name = 'note']"));
+        noteField.sendKeys("Už nemá spalničky.");
+
+        WebElement createApplicationBtn = prohlizec.findElement(By.xpath("//input[@type = 'submit']"));
+        createApplicationBtn.click();
+
+        Assertions.assertNotNull(EditBtn);
+    }
+
     private void login(String email, String password) {
         WebElement emailValue = prohlizec.findElement(By.id("email"));
         emailValue.click();
@@ -116,7 +141,6 @@ public class TestyPrihlasovaniNaKurzy {
 
         WebElement parentEmail = prohlizec.findElement(By.id("email"));
         parentEmail.sendKeys("");
-        //Assertions.assertEquals("beznyemail@seznam.cz",parentEmail.getAttribute("value"));
 
         WebElement choosePayment = prohlizec.findElement(By.xpath("//label[contains(@for, 'payment_transfer')]"));
         choosePayment.click();
@@ -124,8 +148,8 @@ public class TestyPrihlasovaniNaKurzy {
         WebElement restrictionCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
         restrictionCheckBox.click();
 
-        WebElement noteField = prohlizec.findElement(By.xpath("//textarea[@name = 'restrictions']"));
-        noteField.sendKeys("Spalničky");
+        WebElement restrictionField = prohlizec.findElement(By.xpath("//textarea[@name = 'restrictions']"));
+        restrictionField.sendKeys("Spalničky");
 
         WebElement termsConditionsCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'terms_conditions')]"));
         termsConditionsCheckBox.click();
