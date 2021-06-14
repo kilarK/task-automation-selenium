@@ -1,162 +1,188 @@
 package cz.czechitas.selenium;
 
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.time.Year;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class TestyPrihlasovaniNaKurzy {
 
-    WebDriver prohlizec;
+    private static final String URL_APP = "https://cz-test-dva.herokuapp.com/";
+
+    WebDriver browserFox;
 
     @BeforeEach
     public void setUp() {
 //      System.setProperty("webdriver.gecko.driver", System.getProperty("user.home") + "/Java-Training/Selenium/geckodriver");
         System.setProperty("webdriver.gecko.driver", "C:\\Java-Training\\Selenium\\geckodriver.exe");
-        prohlizec = new FirefoxDriver();
-        prohlizec.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        browserFox = new FirefoxDriver();
+        browserFox.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     }
 
     @Test
-    public void existingParentIsAbleToLog() {
-        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
-        WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//a[text()='Přihlásit                ']"));
-        LoginMainPageBtn.click();
+    public void existingParentShouldLog() {
+        browserFox.navigate().to(URL_APP);
+
+        this.tapLoginUserBtn();
         this.login("beznyemail@seznam.cz", "Karelctvrty4");
 
-        WebElement isLoggedIn = prohlizec.findElement(By.xpath("//*[contains(@class,'dropdown')]/span"));
-        String isLoggedInText = isLoggedIn.getText();
 
+        WebElement isLoggedIn = browserFox.findElement(By.xpath("//*[contains(@class,'dropdown')]/span"));
+        Assertions.assertNotNull(isLoggedIn);
+        String isLoggedInText = isLoggedIn.getText();
         Assertions.assertEquals("Přihlášen", isLoggedInText);
     }
 
     @Test
-    public void ParentIsAbleToChooseCourseLogInCreateApplication() {
-        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
+    public void ParentShouldChooseCourseLogInCreateApplication() {
+        browserFox.navigate().to(URL_APP);
 
-        List<WebElement> moreInfoBtns = prohlizec.findElements(By.xpath("//a[text()='Více informací']"));
-        WebElement moreInfoDABtn = moreInfoBtns.get(0);
-        moreInfoDABtn.click();
-
-        List<WebElement> createApplicationBtns = prohlizec.findElements(By.xpath("//div/a[text()='Vytvořit přihlášku']"));
-        WebElement createApplicationBtn1 = createApplicationBtns.get(1);
-        createApplicationBtn1.click();
-
+        this.chooseCourseCathegory(0);
+        this.chooseCourse();
         this.login("beznyemail@seznam.cz", "Karelctvrty4");
-        this.fillApplication("Jan", "Lucemburský");
+        this.fillApplication();
 
-        WebElement createApplicationBtn = prohlizec.findElement(By.xpath("//input[@type = 'submit']"));
-        createApplicationBtn.click();
+        this.confirmApplication();
 
-        WebElement loadConfirmationLink = prohlizec.findElement(By.xpath("//a[contains(@title,'Stáhnout p')]"));
+        WebElement loadConfirmationLink = browserFox.findElement(By.xpath("//a[contains(@title,'Stáhnout p')]"));
         Assertions.assertNotNull(loadConfirmationLink);
 
     }
 
     @Test
-    public void ParentIsAbleToLoginChooseCourseAndApply() {
-        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
-        WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//a[text()='Přihlásit                ']"));
-        LoginMainPageBtn.click();
+    public void ParentShouldLoginChooseCourseAndApply() {
+        browserFox.navigate().to(URL_APP);
+
+        this.tapLoginUserBtn();
         this.login("beznyemail@seznam.cz", "Karelctvrty4");
 
-        WebElement createNewApplicationBtn = prohlizec.findElement(By.xpath("//a[contains(text(), 'Vytvořit novou')]"));
+        WebElement createNewApplicationBtn = browserFox.findElement(By.xpath("//a[contains(text(), 'Vytvořit novou')]"));
         createNewApplicationBtn.click();
 
-        List<WebElement> moreInfoBtns = prohlizec.findElements(By.xpath("//a[text()='Více informací']"));
+        List<WebElement> moreInfoBtns = browserFox.findElements(By.xpath("//a[text()='Více informací']"));
         WebElement moreInfoDABtn = moreInfoBtns.get(0);
         moreInfoDABtn.click();
 
-        List<WebElement> createApplicationBtns = prohlizec.findElements(By.xpath("//div/a[text()='Vytvořit přihlášku']"));
+        List<WebElement> createApplicationBtns = browserFox.findElements(By.xpath("//div/a[text()='Vytvořit přihlášku']"));
         WebElement createApplicationBtn1 = createApplicationBtns.get(1);
         createApplicationBtn1.click();
 
-        this.fillApplication("Johanka", "Z Arku");
+        this.fillApplication();
 
-        WebElement createApplicationBtn = prohlizec.findElement(By.xpath("//input[@type = 'submit']"));
+        WebElement createApplicationBtn = browserFox.findElement(By.xpath("//input[@type = 'submit']"));
         createApplicationBtn.click();
 
-        WebElement loadConfirmationLink = prohlizec.findElement(By.xpath("//a[contains(@title,'Stáhnout p')]"));
+        WebElement loadConfirmationLink = browserFox.findElement(By.xpath("//a[contains(@title,'Stáhnout p')]"));
         Assertions.assertNotNull(loadConfirmationLink);
     }
 
     @Test
-    public void parentIsAbleToLoginAndEditApplication() {
-        prohlizec.navigate().to("https://cz-test-jedna.herokuapp.com/");
-        WebElement LoginMainPageBtn = prohlizec.findElement(By.xpath("//a[text()='Přihlásit                ']"));
+    public void parentShouldLoginAndEditApplication() {
+        browserFox.navigate().to("https://cz-test-jedna.herokuapp.com/");
+        WebElement LoginMainPageBtn = browserFox.findElement(By.xpath("//a[text()='Přihlásit                ']"));
         LoginMainPageBtn.click();
         this.login("beznyemail@seznam.cz", "Karelctvrty4");
 
-        WebElement EditBtn = prohlizec.findElement(By.xpath("//a[contains(text(), 'Upravit')][1]"));
+        WebElement EditBtn = browserFox.findElement(By.xpath("//a[contains(text(), 'Upravit')][1]"));
         EditBtn.click();
 
-        WebElement restrictionField = prohlizec.findElement(By.xpath("//textarea[@name = 'restrictions']"));
+        WebElement restrictionField = browserFox.findElement(By.xpath("//textarea[@name = 'restrictions']"));
         restrictionField.clear();
 
-        WebElement restrictionCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
+        WebElement restrictionCheckBox = browserFox.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
         restrictionCheckBox.click();
 
-        WebElement noteField = prohlizec.findElement(By.xpath("//textarea[@name = 'note']"));
+        WebElement noteField = browserFox.findElement(By.xpath("//textarea[@name = 'note']"));
         noteField.sendKeys("Už nemá spalničky.");
 
-        WebElement createApplicationBtn = prohlizec.findElement(By.xpath("//input[@type = 'submit']"));
+        WebElement createApplicationBtn = browserFox.findElement(By.xpath("//input[@type = 'submit']"));
         createApplicationBtn.click();
 
         Assertions.assertNotNull(EditBtn);
     }
 
-    private void login(String email, String password) {
-        WebElement emailValue = prohlizec.findElement(By.id("email"));
-        emailValue.click();
-        emailValue.sendKeys(email);
-        WebElement passwordValue = prohlizec.findElement(By.id("password"));
-        passwordValue.sendKeys(password);
+    private void tapLoginUserBtn() {
+        WebElement LoginMainPageBtn = browserFox.findElement(By.linkText("Přihlásit"));
+        LoginMainPageBtn.click();
+    }
 
-        WebElement loginFormBtn = prohlizec.findElement(By.xpath("//button[@type='submit']"));
+    private void confirmLogin() {
+        WebElement loginFormBtn = browserFox.findElement(By.xpath("//button[@type='submit']"));
         loginFormBtn.click();
     }
 
-    private void fillApplication(String forename, String surname) {
-        WebElement chooseTerm = prohlizec.findElement(By.xpath("//*[contains(text(), 'Vyberte termín')]"));
+    private void fillEmailField(String email) {
+        WebElement emailValue = browserFox.findElement(By.id("email"));
+        emailValue.sendKeys(email);
+    }
+    private void fillPasswordField(String password) {
+        WebElement emailValue = browserFox.findElement(By.id("password"));
+        emailValue.sendKeys(password);
+    }
+
+    private void login(String email, String password) {
+
+        this.fillEmailField(email);
+
+        this.fillPasswordField(password);
+
+        this.confirmLogin();
+    }
+
+    private void chooseCourseCathegory(int courseOrder) {
+        List<WebElement> moreInfoBtns = browserFox.findElements(By.xpath("//a[text()='Více informací']"));
+        WebElement moreInfoDABtn = moreInfoBtns.get(courseOrder);
+        moreInfoDABtn.click();
+    }
+
+    private void chooseCourse() {
+        List<WebElement> createApplicationBtns = browserFox.findElements(By.xpath("//div/a[text()='Vytvořit přihlášku']"));
+        WebElement createApplicationBtn1 = createApplicationBtns.get(1);
+        createApplicationBtn1.click();
+    }
+
+    private void confirmApplication() {
+        WebElement createApplicationBtn = browserFox.findElement(By.xpath("//input[@type = 'submit']"));
+        createApplicationBtn.click();
+    }
+
+    private void fillApplication() {
+        WebElement chooseTerm = browserFox.findElement(By.xpath("//*[contains(text(), 'Vyberte termín')]"));
         chooseTerm.click();
-        WebElement chooseTermInput = prohlizec.findElement(By.xpath("//input[@type='search']"));
+        WebElement chooseTermInput = browserFox.findElement(By.xpath("//input[@type='search']"));
         chooseTermInput.sendKeys("05." + Keys.ENTER);
 
-        WebElement parentNameField = prohlizec.findElement(By.id("parent_name"));
-        parentNameField.sendKeys("");
+        WebElement forenameField = browserFox.findElement(By.xpath("//input[@name='forename']"));
+        forenameField.sendKeys("Jan");
 
-        WebElement forenameField = prohlizec.findElement(By.xpath("//input[@name='forename']"));
-        forenameField.sendKeys(forename);
-        WebElement surnameField = prohlizec.findElement(By.xpath("//input[@name='surname']"));
-        surnameField.sendKeys(surname);
-        WebElement BirthdayField = prohlizec.findElement(By.xpath("//input[@name='birthday']"));
+        WebElement surnameField = browserFox.findElement(By.xpath("//input[@name='surname']"));
+        String randomSurname = "Lucemburský" + System.currentTimeMillis();
+
+        surnameField.sendKeys(randomSurname);
+
+        WebElement BirthdayField = browserFox.findElement(By.xpath("//input[@name='birthday']"));
         BirthdayField.sendKeys("1.1.2010");
 
-        WebElement parentEmail = prohlizec.findElement(By.id("email"));
-        parentEmail.sendKeys("");
-
-        WebElement choosePayment = prohlizec.findElement(By.xpath("//label[contains(@for, 'payment_transfer')]"));
+        WebElement choosePayment = browserFox.findElement(By.xpath("//label[contains(@for, 'payment_transfer')]"));
         choosePayment.click();
 
-        WebElement restrictionCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
+        WebElement restrictionCheckBox = browserFox.findElement(By.xpath("//label[contains(@for, 'restrictions_yes')]"));
         restrictionCheckBox.click();
 
-        WebElement restrictionField = prohlizec.findElement(By.xpath("//textarea[@name = 'restrictions']"));
+        WebElement restrictionField = browserFox.findElement(By.xpath("//textarea[@name = 'restrictions']"));
         restrictionField.sendKeys("Spalničky");
 
-        WebElement termsConditionsCheckBox = prohlizec.findElement(By.xpath("//label[contains(@for, 'terms_conditions')]"));
+        WebElement termsConditionsCheckBox = browserFox.findElement(By.xpath("//label[contains(@for, 'terms_conditions')]"));
         termsConditionsCheckBox.click();
     }
 
     @AfterEach
     public void tearDown() {
-        prohlizec.close();
+        browserFox.close();
     }
 }
